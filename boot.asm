@@ -45,6 +45,7 @@ disk_error:
 	mov al, [bx]
 	jmp print_msg
 	print_msg:
+		inc bx
 		int 0x10
 		mov al, [bx]
 		cmp al, 0
