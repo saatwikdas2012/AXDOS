@@ -15,7 +15,7 @@ bool strcmp(char *str1, char *str2);
 void set_background_color(char *color);
 
 void main(void) {
-	print("Welcome to ")
+	print("Welcome to ");
 	set_background_color("white");
 	set_text_color("red");
     print("A");
