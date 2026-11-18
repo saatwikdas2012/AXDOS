@@ -1,16 +1,24 @@
 #include <stdbool.h>
+#define VGA_HEIGHT 25
+#define VGA_WIDTH 80
+#define VGA_MEMORY 0xb8000
 
-volatile unsigned short* video_memory = (volatile unsigned short*)0xb8000;
+int cursor_x = 0;
+int cursor_y = 0;
+
+volatile unsigned short* video_memory = (volatile unsigned short*)VGA_MEMORY;
 short text_color = 0x0f00;
 short background_color = 0x0000;
 
-void set_text_color(char *color);
+void newline(void);
 
 void putchar(char ch);
 
 void print(char *word);
 
 bool strcmp(char *str1, char *str2);
+
+void set_text_color(char *color);
 
 void set_background_color(char *color);
 
@@ -29,16 +37,31 @@ void main(void) {
     print("S");
 	set_text_color("white");
 	set_background_color("black");
-    print(" Pre-Alpha 1.0!");
+    print(" Pre-Alpha 1.0!\n");
+    print("Now with new lines!!!");
+}
+
+void newline(void){
+    cursor_x = 0;
+    cursor_y++;
 }
 
 void putchar(char ch) {
-	*video_memory = background_color + text_color + ch;
-	video_memory++;
+    int offset = cursor_y * VGA_WIDTH + cursor_x;
+	video_memory[offset] = (unsigned short)ch | (text_color | background_color);
+
+    cursor_x++;
+    if (cursor_x >= VGA_WIDTH){
+        newline();
+    }
 }
 
 void print(char *word) {
     for (int i = 0; word[i] != 0; i++) {
+        if (word[i] == '\n'){
+            newline();
+            continue;
+        }
         putchar(word[i]);
     }
 }
