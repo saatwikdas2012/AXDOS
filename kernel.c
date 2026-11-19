@@ -12,6 +12,16 @@ short background_color = 0x0000;
 
 void newline(void);
 
+void clearscreen(void);
+
+static inline unsigned char inbyte(unsigned short port);
+
+static inline void outbyte(unsigned short port, unsigned short value);
+
+unsigned char keyboard_read(void);
+
+char scan_char(unsigned char c);
+
 void putchar(char ch);
 
 void print(char *word);
@@ -38,7 +48,11 @@ void main(void) {
 	set_text_color("white");
 	set_background_color("black");
     print(" Pre-Alpha 1.0!\n");
-    print("Now with new lines!!!");
+    print("Now with new line escape sequence!\n");
+	print("AND TEXT INPUT!!!\ntry it: ");
+	while(true){
+		putchar(scan_char(keyboard_read()));
+	}
 }
 
 void newline(void){
@@ -46,7 +60,77 @@ void newline(void){
     cursor_y++;
 }
 
+void clearscreen(void){
+	cursor_x = 0;
+	cursor_y = 0;
+	for (int i = 0; i < (VGA_HEIGHT * VGA_WIDTH); i++){
+		video_memory[i] = 0xf20;
+	}
+}
+
+static inline unsigned char inbyte(unsigned short port){
+	unsigned char result;
+	__asm__ __volatile__(
+		"inb %1, %0"
+		: "=a" (result)
+		: "d" (port)
+	);
+
+	return result;
+}
+
+static inline void outbyte(unsigned short port, unsigned short value){
+	__asm__ __volatile__(
+		"outb %0, %1"
+		:
+		: "a" (value), "d" (port)
+	);
+}
+
+unsigned char keyboard_read(void){
+	bool status = inbyte(0x64) & 0x01;
+	if (status){
+		return inbyte(0x60);
+	} else{
+		return 0x00;
+	}
+}
+
+char scan_char(unsigned char c){
+	if (c == 0x1e){return 'A';}
+	else if (c == 0x30){return 'B';}
+	else if (c == 0x2e){return 'C';}
+	else if (c == 0x20){return 'D';}
+	else if (c == 0x12){return 'E';}
+	else if (c == 0x21){return 'F';}
+	else if (c == 0x22){return 'G';}
+	else if (c == 0x23){return 'H';}
+	else if (c == 0x17){return 'I';}
+	else if (c == 0x24){return 'J';}
+	else if (c == 0x25){return 'K';}
+	else if (c == 0x26){return 'L';}
+	else if (c == 0x32){return 'M';}
+	else if (c == 0x31){return 'N';}
+	else if (c == 0x18){return 'O';}
+	else if (c == 0x19){return 'P';}
+	else if (c == 0x10){return 'Q';}
+	else if (c == 0x13){return 'R';}
+	else if (c == 0x1f){return 'S';}
+	else if (c == 0x14){return 'T';}
+	else if (c == 0x16){return 'U';}
+	else if (c == 0x2f){return 'V';}
+	else if (c == 0x11){return 'W';}
+	else if (c == 0x2d){return 'X';}
+	else if (c == 0x15){return 'Y';}
+	else if (c == 0x2c){return 'Z';}
+	else if (c == 0x39){return ' ';}
+	else {return '\0';}
+}
+
 void putchar(char ch) {
+	if (ch == '\0'){
+		return;
+	}
     int offset = cursor_y * VGA_WIDTH + cursor_x;
 	video_memory[offset] = (unsigned short)ch | (text_color | background_color);
 
