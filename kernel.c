@@ -218,11 +218,10 @@ char *scan(char *prompt){
 	print(prompt);
 	char user_in = scan_char(keyboard_read());
 	int i = 0;
-	static char str[50];
+	static char str[1024];
 	while(user_in != '\n' && i < 49){
 		user_in = scan_char(keyboard_read());
 		if (user_in == '\n'){
-			putchar(user_in);
 			break;
 		}
 		if (user_in == '\0'){continue;}
@@ -230,6 +229,7 @@ char *scan(char *prompt){
 		putchar(user_in);
 		i++;
 	}
+	putchar('\n');
 	str[i] = '\0';
 	return str;
 }
