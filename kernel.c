@@ -24,6 +24,7 @@ char scan_char(unsigned char c);
 char *scan(char *prompt);
 void putchar(char ch);
 void print(char *word);
+void setstr(char *str1, char *str2);
 bool strcmp(char *str1, char *str2);
 bool strcnt(char *str1, char *str2);
 void set_text_color(char *color);
@@ -56,7 +57,7 @@ void main(void) {
 		} else if (strcmp(command, "ver")){
 			print("AXDOS Alpha 1.0\n");
 		} else if (strcmp(command, "help")){
-			print("AXDOS - Help & Commands\n=======================\n\nAvailable Commands:\n\n  help   - Displays this help message.\n  echo   - Displays the text you type.\n  ver    - Displays the current AXDOS version.\n  stop   - Shuts down AXDOS.\n  cls    - Clears the screen.\n\nUsage:\n  Type a command and press ENTER to execute it.\n\n=======================\n       AXDOS OS\n");
+			print(" AXDOS - Help & Commands\n =======================\n\n Available Commands:\n\n  help   - Displays this help message.\n  echo   - Displays the text you type.\n  ver    - Displays the current AXDOS version.\n  stop   - Shuts down AXDOS.\n  cls    - Clears the screen.\n  color  - Change your color scheme.\n\n Usage:\n  Type a command and press ENTER to execute it.\n\n =======================\n        AXDOS OS\n");
 		} else if (strcmp(command, "stop")){
 			print("AXDOS shutting down...\nAXDOS has successfully stopped\nYou may now power off the device.\nThank you for using AXDOS!\n");
 			while(true){
@@ -64,6 +65,14 @@ void main(void) {
 			}
 			break;
 		} else if (strcmp(command, "cls")){
+			clearscreen();
+		} else if (strcmp(command, "color")) {
+			print(" AXDOS - Color Settings\n ======================\n\nAvailable Colors:\n\n [01] Black\n [02] Blue\n [03] Green\n [04] Cyan\n [05] Red\n [06] Magenta\n [07] Brown\n [08] Light Gray\n [09] Dark Gray\n [10] Light Blue\n [11] Light Green\n [12] Light Cyan\n [13] Light Red\n [14] Pink\n [15] Yellow\n [16] White\n\n =======================\n        AXDOS OS\n");
+			char *newtext;
+			char *input = scan("New text color (all lowercase): ");
+			setstr(newtext,input);
+			set_background_color(scan("New background color (all lowercase): "));
+			set_text_color(newtext);
 			clearscreen();
 		} else if (command[0] == '\0'){
 			continue;
@@ -82,7 +91,7 @@ void clearscreen(void){
 	cursor_x = 0;
 	cursor_y = 0;
 	for (int i = 0; i < (VGA_HEIGHT * VGA_WIDTH); i++){
-		video_memory[i] = 0xf20;
+		video_memory[i] = (unsigned short)' ' | text_color | background_color;
 	}
 }
 
@@ -387,6 +396,16 @@ void set_background_color(char *color){
 	} else{
 		print("Invalid Argument: Undefined Color");
 	}
+}
+
+void setstr(char *str1, char *str2){
+	int i = 0;
+	while (str2[i] != 0){
+		str1[i] = str2[i];
+		i++;
+	}
+	str1[i] = '\0';
+	return;
 }
 
 bool strcmp(char *str1, char *str2){
