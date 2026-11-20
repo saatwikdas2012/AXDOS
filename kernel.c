@@ -16,6 +16,7 @@ short background_color = 0x0000;
 
 void newline(void);
 void clearscreen(void);
+void scroll(void);
 static inline unsigned char inbyte(unsigned short port);
 static inline void outbyte(unsigned short port, unsigned short value);
 unsigned char keyboard_read(void);
@@ -24,6 +25,7 @@ char *scan(char *prompt);
 void putchar(char ch);
 void print(char *word);
 bool strcmp(char *str1, char *str2);
+bool strcnt(char *str1, char *str2);
 void set_text_color(char *color);
 void set_background_color(char *color);
 
@@ -42,11 +44,31 @@ void main(void) {
     print("S");
 	set_text_color("white");
 	set_background_color("black");
-    print(" Pre-Alpha 1.0\n");
-    print("Now with new lines!!!\n");
-	char *name = scan("What is your name? ");
-	print("hello, ");
-	print(name);
+    print(" Alpha 1.0\n");
+	print("Type help for a list of commands.\n");
+    while(true){
+		char *command = scan("AXDOS> ");
+		if (strcnt("echo ", command)){
+			for (int i = 5; command[i] != '\0'; i++){
+				putchar(command[i]);
+			}
+			putchar('\n');
+		} else if (strcmp(command, "ver")){
+			print("AXDOS Alpha 1.0\n");
+		} else if (strcmp(command, "help")){
+			print("AXDOS - Help & Commands\n=======================\n\nAvailable Commands:\n\n  help   - Displays this help message.\n  echo   - Displays the text you type.\n  ver    - Displays the current AXDOS version.\n  stop   - Shuts down AXDOS.\n\nUsage:\n  Type a command and press ENTER to execute it.\n\n=======================\n       AXDOS OS\n");
+		} else if (strcmp(command, "stop")){
+			print("AXDOS shutting down...\nAXDOS has successfully stopped\nYou may now power off the device.\nThank you for using AXDOS!\n");
+			while(true){
+				__asm__ __volatile__("hlt");
+			}
+			break;
+		} else if (command[0] == '\0'){
+			continue;
+		} else {
+			print("Command not recognized.\n");
+		}
+	}
 }
 
 void newline(void){
@@ -60,6 +82,18 @@ void clearscreen(void){
 	for (int i = 0; i < (VGA_HEIGHT * VGA_WIDTH); i++){
 		video_memory[i] = 0xf20;
 	}
+}
+
+void scroll(void){
+	for (int i = 0; i < VGA_HEIGHT; i++){
+		for (int j = 0; j < VGA_WIDTH; j++){
+			video_memory[i*VGA_WIDTH+j]=video_memory[(i+1)*VGA_WIDTH+j];
+		}
+	}
+	for (int i = 0; i < VGA_WIDTH; i++){
+		video_memory[VGA_HEIGHT*VGA_WIDTH+i]=(unsigned short)' ' | text_color | background_color;
+	}
+	cursor_y = VGA_HEIGHT-1;
 }
 
 static inline unsigned char inbyte(unsigned short port){
@@ -210,6 +244,7 @@ char scan_char(unsigned char c){
 		else if (c == 0x35){return '/';}
 		else if (c == 0x0c){return '-';}
 		else if (c == 0x1c){return '\n';}
+		else if (c == 0x0e){return '\b';}
 		else {return '\0';}
 	} else {return '\0';}
 }
@@ -221,10 +256,17 @@ char *scan(char *prompt){
 	static char str[1024];
 	while(user_in != '\n' && i < 49){
 		user_in = scan_char(keyboard_read());
-		if (user_in == '\n'){
-			break;
-		}
+		if (user_in == '\n'){break;}
 		if (user_in == '\0'){continue;}
+		if (user_in == '\b'){
+			if (i == 0){
+				continue;
+			}
+			putchar(user_in);
+			i--;
+			str[i] = '\0';
+			continue;
+		}
 		str[i] = user_in;
 		putchar(user_in);
 		i++;
@@ -242,6 +284,15 @@ void putchar(char ch) {
         newline();
         return;
     }
+	if (ch == '\b'){
+		if (cursor_x == 0){
+			cursor_y--;
+			cursor_x = VGA_WIDTH;
+		} else{cursor_x--;}
+		video_memory[cursor_y * VGA_WIDTH + cursor_x] = (unsigned short)0 | (text_color | background_color);
+		return;
+	}
+
     int offset = cursor_y * VGA_WIDTH + cursor_x;
 	video_memory[offset] = (unsigned short)ch | (text_color | background_color);
 
@@ -249,6 +300,9 @@ void putchar(char ch) {
     if (cursor_x >= VGA_WIDTH){
         newline();
     }
+	if (cursor_y >= VGA_HEIGHT){
+		scroll();
+	}
 }
 
 void print(char *word) {
@@ -335,11 +389,22 @@ void set_background_color(char *color){
 
 bool strcmp(char *str1, char *str2){
 	int i = 0;
-	while (str1[i] != 0 && str2[i] != 0){
+	while (str1[i] != 0 || str2[i] != 0){
 		if (str1[i] != str2[i]){
 			return false;
 		}
 		i++;
 	}
 	return str1[i] == str2[i];
+}
+
+bool strcnt(char *str1, char *str2){
+	int i = 0;
+	while (str1[i] != 0){
+		if (str1[i] != str2[i]){
+			return false;
+		}
+		i++;
+	}
+	return true;
 }
