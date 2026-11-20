@@ -56,13 +56,15 @@ void main(void) {
 		} else if (strcmp(command, "ver")){
 			print("AXDOS Alpha 1.0\n");
 		} else if (strcmp(command, "help")){
-			print("AXDOS - Help & Commands\n=======================\n\nAvailable Commands:\n\n  help   - Displays this help message.\n  echo   - Displays the text you type.\n  ver    - Displays the current AXDOS version.\n  stop   - Shuts down AXDOS.\n\nUsage:\n  Type a command and press ENTER to execute it.\n\n=======================\n       AXDOS OS\n");
+			print("AXDOS - Help & Commands\n=======================\n\nAvailable Commands:\n\n  help   - Displays this help message.\n  echo   - Displays the text you type.\n  ver    - Displays the current AXDOS version.\n  stop   - Shuts down AXDOS.\n  cls    - Clears the screen.\n\nUsage:\n  Type a command and press ENTER to execute it.\n\n=======================\n       AXDOS OS\n");
 		} else if (strcmp(command, "stop")){
 			print("AXDOS shutting down...\nAXDOS has successfully stopped\nYou may now power off the device.\nThank you for using AXDOS!\n");
 			while(true){
 				__asm__ __volatile__("hlt");
 			}
 			break;
+		} else if (strcmp(command, "cls")){
+			clearscreen();
 		} else if (command[0] == '\0'){
 			continue;
 		} else {
