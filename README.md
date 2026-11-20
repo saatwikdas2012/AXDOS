@@ -17,7 +17,7 @@ Exploring the fundamentals of operating systems, computer architecture, and low-
 </p>
 
 <p align="center">
-<img src="https://img.shields.io/badge/Version-Pre--Alpha%201.0-orange" alt="Version">
+<img src="https://img.shields.io/badge/Version-Alpha%201.0-brightgreen" alt="Version">
 <img src="https://img.shields.io/badge/Architecture-x86-blue" alt="Architecture">
 <img src="https://img.shields.io/badge/Language-C%20%7C%20Assembly-purple" alt="Languages">
 <img src="https://img.shields.io/badge/Status-In%20Development-yellow" alt="Status">
@@ -36,7 +36,7 @@ Unlike ordinary applications, AXDOS runs directly on computer hardware, handling
 </p>
 
 <p>
-The project aims to explore how operating systems work internally, from bootloaders and processor modes to hardware interaction and kernel development.
+The project aims to explore how operating systems work internally, from bootloaders and processor modes to hardware interaction, keyboard input, and kernel development.
 </p>
 
 <p>
@@ -105,41 +105,57 @@ The easiest way to experience AXDOS is through
 </tr>
 <tr>
 <td>Keyboard Input</td>
-<td>Basic PS/2 keyboard support</td>
+<td>PS/2 keyboard scan-code handling and character translation</td>
+</tr>
+<tr>
+<td>Interactive Shell</td>
+<td>Accepts keyboard input and executes basic commands</td>
+</tr>
+<tr>
+<td>Command Buffer</td>
+<td>Stores user-entered commands</td>
+</tr>
+<tr>
+<td>Backspace Handling</td>
+<td>Supports basic command-line editing</td>
+</tr>
+<tr>
+<td>Cursor Positioning</td>
+<td>Manages VGA text cursor position</td>
+</tr>
+<tr>
+<td>Screen Scrolling</td>
+<td>Supports scrolling in VGA text mode</td>
 </tr>
 <tr>
 <td>String Utilities</td>
-<td>Basic string manipulation functions</td>
+<td>Basic string manipulation and comparison functions</td>
 </tr>
 <tr>
-<td>Interactive Input</td>
-<td>Initial interactive keyboard input functionality</td>
+<td>CPU Halt</td>
+<td>Provides a command to halt the processor</td>
 </tr>
 </tbody>
 </table>
 
 <hr>
 
-<h2>Upcoming Release: Alpha 1.0</h2>
+<h2>Alpha 1.0 - Current Release</h2>
 
 <p align="center">
-<img src="https://img.shields.io/badge/Next%20Release-Alpha%201.0-blueviolet" alt="Upcoming Alpha 1.0">
-<img src="https://img.shields.io/badge/Feature-Basic%20Shell-brightgreen" alt="Basic Shell">
+<img src="https://img.shields.io/badge/Release-Alpha%201.0-brightgreen" alt="Alpha 1.0">
+<img src="https://img.shields.io/badge/Feature-Interactive%20Shell-blue" alt="Interactive Shell">
 </p>
 
 <p>
-The next major milestone for AXDOS is <strong>Alpha 1.0</strong>.
+Alpha 1.0 is an important milestone in AXDOS development. It introduces a basic interactive command-line shell, allowing users to communicate with the operating system directly through keyboard commands.
 </p>
 
 <p>
-This update will introduce one of the most important features of an operating system: a basic command-line shell.
+The shell accepts commands using the <code>AXDOS&gt;</code> prompt and processes them through the kernel.
 </p>
 
-<p>
-Users will be able to interact directly with AXDOS by entering commands through the keyboard.
-</p>
-
-<h3>Planned Shell Commands</h3>
+<h3>Available Shell Commands</h3>
 
 <table>
 <thead>
@@ -150,47 +166,151 @@ Users will be able to interact directly with AXDOS by entering commands through 
 </thead>
 <tbody>
 <tr>
+<td><code>help</code></td>
+<td>Displays a list of available commands</td>
+</tr>
+<tr>
 <td><code>echo</code></td>
-<td>Echoes the parameter supplied after the command</td>
+<td>Displays the text supplied after the command</td>
 </tr>
 <tr>
 <td><code>ver</code></td>
 <td>Displays the current operating system version</td>
 </tr>
 <tr>
-<td><code>help</code></td>
-<td>Displays a list of available commands</td>
+<td><code>stop</code></td>
+<td>Halts the processor</td>
+</tr>
+<tr>
+<td><code>cls</code></td>
+<td>Clears the screen</td>
 </tr>
 </tbody>
 </table>
 
 <h3>Command Examples</h3>
 
-<h4>1. echo</h4>
+<h4>1. help</h4>
+
+<pre><code>AXDOS&gt; help
+
+  AXDOS - Help & Commands
+  =======================
+  
+  Available Commands:
+  
+  help   - Displays this help message.
+  echo   - Displays the text you type.
+  ver    - Displays the current AXDOS version.
+  stop   - Shuts down AXDOS.
+  cls    - Clears the screen.
+  
+  Usage:
+  Type a command and press ENTER to execute it.
+  
+  =======================
+  AXDOS OS</code></pre>
+
+<p>Displays the available commands and their descriptions.</p>
+
+<h4>2. echo</h4>
 
 <pre><code>AXDOS&gt; echo Hello World!
 Hello World!</code></pre>
 
 <p>Displays the text supplied after the <code>echo</code> command.</p>
 
-<h4>2. ver</h4>
+<h4>3. ver</h4>
 
 <pre><code>AXDOS&gt; ver
-AXDOS Pre-Alpha 1.0</code></pre>
+AXDOS Alpha 1.0</code></pre>
 
-<p>Displays the operating system version.</p>
+<p>Displays the current operating system version.</p>
 
-<h4>3. help</h4>
+<h4>4. cls</h4>
 
-<pre><code>AXDOS&gt; help
-Available commands:
+<pre><code>AXDOS&gt; cls</code></pre>
 
-echo - Echoes the supplied text
-ver - Displays the OS version
-help - Displays available commands</code></pre>
+<p>Clears the terminal screen.</p>
+
+<h4>5. stop</h4>
+
+<pre><code>AXDOS&gt; stop
+AXDOS shutting down...
+AXDOS has successfully stopped
+You may now power off the device.
+Thank you for using AXDOS!
+</code></pre>
+
+<p>Halts the processor.</p>
+
+<hr>
+
+<h2>Next Update: Alpha 1.5</h2>
+
+<p align="center">
+<img src="https://img.shields.io/badge/Next%20Release-Alpha%201.5-blueviolet" alt="Upcoming Alpha 1.5">
+<img src="https://img.shields.io/badge/Planned-Directory%20Command-orange" alt="Directory Command">
+<img src="https://img.shields.io/badge/Planned-FAT16%20Filesystem-blue" alt="FAT16 Filesystem">
+</p>
 
 <p>
-The Alpha 1.0 update will mark an important step in AXDOS development, moving the project from basic kernel interaction toward a more functional and interactive operating system.
+The next planned milestone for AXDOS is <strong>Alpha 1.5</strong>.
+</p>
+
+<p>
+This update will focus on bringing basic filesystem functionality to AXDOS, making it possible to move beyond a simple command-line environment and begin interacting with files and directories.
+</p>
+
+<h3>Planned Features</h3>
+
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dir</code> command</td>
+<td>Lists files and directories available on the filesystem</td>
+</tr>
+<tr>
+<td>FAT16 Filesystem</td>
+<td>Introduces FAT16 filesystem support for reading directory and file information</td>
+</tr>
+<tr>
+<td>Directory Handling</td>
+<td>Begins implementing basic directory navigation and management</td>
+</tr>
+<tr>
+<td>Disk Access</td>
+<td>Introduces the foundations for accessing filesystem data stored on disk</td>
+</tr>
+</tbody>
+</table>
+
+<h3>Planned Command Example</h3>
+
+<h4>1. dir</h4>
+
+<pre><code>AXDOS&gt; dir
+
+Directory of A:\
+
+SYSTEM
+README.TXT
+KERNEL.BIN
+
+3 File(s)</code></pre>
+
+<p>
+The example above illustrates the intended appearance of the future <code>dir</code> command. Actual output will depend on the filesystem contents and implementation.
+</p>
+
+<p>
+The introduction of FAT16 will be a major step toward giving AXDOS persistent storage and the ability to work with files on disk.
 </p>
 
 <hr>
@@ -207,7 +327,7 @@ The Alpha 1.0 update will mark an important step in AXDOS development, moving th
 <tbody>
 <tr>
 <td>C</td>
-<td>Kernel development</td>
+<td>Kernel and shell development</td>
 </tr>
 <tr>
 <td>x86 Assembly</td>
@@ -229,6 +349,10 @@ The Alpha 1.0 update will mark an important step in AXDOS development, moving th
 <td>QEMU</td>
 <td>Virtual machine testing</td>
 </tr>
+<tr>
+<td>FAT16</td>
+<td>Planned filesystem support for Alpha 1.5</td>
+</tr>
 </tbody>
 </table>
 
@@ -238,11 +362,11 @@ The Alpha 1.0 update will mark an important step in AXDOS development, moving th
 
 <pre><code>AXDOS/
 │
-├── AXDOS.bin # Precompiled operating system image
-├── boot.asm # Bootloader implementation
-├── kernel_entry.asm # Kernel entry point
-├── kernel.c # Main kernel implementation
-└── README.md # Project documentation</code></pre>
+├── AXDOS.bin          # Precompiled operating system image
+├── boot.asm           # Bootloader implementation
+├── kernel_entry.asm   # Kernel entry point
+├── kernel.c            # Main kernel implementation
+└── README.md           # Project documentation</code></pre>
 
 <hr>
 
@@ -268,17 +392,17 @@ For now, you can use the precompiled <code>AXDOS.bin</code> file to try AXDOS wi
 
 <h2>Future Development</h2>
 
-<p>Beyond Alpha 1.0, AXDOS has several potential development goals:</p>
+<p>Beyond Alpha 1.5, AXDOS has several potential development goals:</p>
 
 <ul>
 <li>Improved keyboard handling.</li>
-<li>VGA scrolling and improved text rendering.</li>
+<li>More advanced shell functionality.</li>
 <li>Interrupt Descriptor Table (IDT).</li>
 <li>Hardware interrupt handling.</li>
 <li>Programmable Interval Timer (PIT) support.</li>
-<li>Additional shell commands.</li>
 <li>Memory management.</li>
-<li>Filesystem implementation.</li>
+<li>Expanded filesystem functionality.</li>
+<li>File creation, reading, and writing.</li>
 <li>Additional hardware support.</li>
 </ul>
 
