@@ -1,4 +1,6 @@
-#include <stdbool.h>
+#define bool  _Bool
+#define true  1
+#define false 0
 #define VGA_HEIGHT 25
 #define VGA_WIDTH 80
 #define VGA_MEMORY 0xb8000
@@ -18,6 +20,7 @@ static inline unsigned char inbyte(unsigned short port);
 static inline void outbyte(unsigned short port, unsigned short value);
 unsigned char keyboard_read(void);
 char scan_char(unsigned char c);
+char *scan(char *prompt);
 void putchar(char ch);
 void print(char *word);
 bool strcmp(char *str1, char *str2);
@@ -41,10 +44,9 @@ void main(void) {
 	set_background_color("black");
     print(" Pre-Alpha 1.0\n");
     print("Now with new lines!!!\n");
-	print("AND TEXT INPUT\ntry it: ");
-	while(true){
-		putchar(scan_char(keyboard_read()));
-	}
+	char *name = scan("What is your name? ");
+	print("hello, ");
+	print(name);
 }
 
 void newline(void){
@@ -89,7 +91,8 @@ unsigned char keyboard_read(void){
 }
 
 char scan_char(unsigned char c){
-	if (c == 0x2a || c == 0x36){
+	if (c == 0x00){return '\0';}
+	else if (c == 0x2a || c == 0x36){
 		shift_pressed=true;
 		return '\0';
 	}
@@ -209,6 +212,26 @@ char scan_char(unsigned char c){
 		else if (c == 0x1c){return '\n';}
 		else {return '\0';}
 	} else {return '\0';}
+}
+
+char *scan(char *prompt){
+	print(prompt);
+	char user_in = scan_char(keyboard_read());
+	int i = 0;
+	static char str[50];
+	while(user_in != '\n' && i < 49){
+		user_in = scan_char(keyboard_read());
+		if (user_in == '\n'){
+			putchar(user_in);
+			break;
+		}
+		if (user_in == '\0'){continue;}
+		str[i] = user_in;
+		putchar(user_in);
+		i++;
+	}
+	str[i] = '\0';
+	return str;
 }
 
 void putchar(char ch) {
